@@ -44,6 +44,10 @@ $ git clone https://github.com/sigstore/cosign
 $ cd cosign
 $ go install ./cmd/cosign
 $ $(go env GOPATH)/bin/cosign
+
+OR
+
+$ make cosign
 ```
 
 ## Contributing
