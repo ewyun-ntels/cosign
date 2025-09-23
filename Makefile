@@ -65,6 +65,45 @@ export KO_DOCKER_REPO=$(KO_PREFIX)
 GHCR_PREFIX ?= ghcr.io/sigstore/cosign
 LATEST_TAG ?=
 
+
+# ---------- Docker image build/push ----------
+DOCKERFILE ?= Dockerfile
+#IMAGE_REPO ?= 192.168.61.145/petasus-ai/kaniko-with-cosign
+IMAGE_REPO ?= image-builder
+#TAG        ?= $(GIT_VERSION)
+TAG        ?= v3.4.1-csap
+KANIKO_VERSION ?= v1.25.0
+
+.PHONY: docker
+docker: ## Build container image with local cosign+kaniko
+	@echo ">> Building image $(IMAGE_REPO):$(TAG)"
+	docker build \
+		--build-arg KANIKO_VERSION=$(KANIKO_VERSION) \
+		--build-arg LDFLAGS="$(LDFLAGS)" \
+		-f $(DOCKERFILE) \
+		-t $(IMAGE_REPO):$(TAG) \
+		.
+
+.PHONY: docker-push
+docker-push: ## Push image
+	@echo ">> Pushing image $(IMAGE_REPO):$(TAG)"
+	docker push $(IMAGE_REPO):$(TAG)
+
+# (선택) buildx로 multi-arch
+PLATFORMS ?= linux/amd64,linux/arm64
+.PHONY: dockerx
+dockerx: ## Multi-arch build and push via buildx
+	@echo ">> Buildx build/push $(IMAGE_REPO):$(TAG) for $(PLATFORMS)"
+	docker buildx build \
+		--platform $(PLATFORMS) \
+		--build-arg KANIKO_VERSION=$(KANIKO_VERSION) \
+		--build-arg LDFLAGS="$(LDFLAGS)" \
+		-f $(DOCKERFILE) \
+		-t $(IMAGE_REPO):$(TAG) \
+		--push \
+		.
+# --------------------------------------------		
+
 .PHONY: all lint test clean cosign conformance cross
 all: cosign
 
