@@ -41,12 +41,12 @@ ifdef SOURCE_DATE_EPOCH
 else
     BUILD_DATE ?= $(shell date "$(DATE_FMT)")
 endif
-GIT_TREESTATE = "clean"
+GIT_TREESTATE = clean
 DIFF = $(shell git diff --quiet >/dev/null 2>&1; if [ $$? -eq 1 ]; then echo "1"; fi)
 ifeq ($(DIFF), 1)
-    GIT_TREESTATE = "dirty"
+    GIT_TREESTATE = dirty
 endif
-PLATFORMS=darwin linux windows
+#PLATFORMS=darwin linux windows
 ARCHITECTURES=amd64
 COSIGNED_ARCHS?=all
 
@@ -68,11 +68,13 @@ LATEST_TAG ?=
 
 # ---------- Docker image build/push ----------
 DOCKERFILE ?= Dockerfile
-#IMAGE_REPO ?= 192.168.61.145/petasus-ai/kaniko-with-cosign
-IMAGE_REPO ?= image-builder
+IMAGE_REPO ?= 192.168.61.145/petasus-ai/image-builder
+#IMAGE_REPO ?= image-builder
 #TAG        ?= $(GIT_VERSION)
 TAG        ?= v3.4.1-csap
 KANIKO_VERSION ?= v1.25.0
+# (선택) buildx로 multi-arch
+PLATFORMS ?= linux/amd64,linux/arm64
 
 .PHONY: docker
 docker: ## Build container image with local cosign+kaniko
@@ -89,8 +91,7 @@ docker-push: ## Push image
 	@echo ">> Pushing image $(IMAGE_REPO):$(TAG)"
 	docker push $(IMAGE_REPO):$(TAG)
 
-# (선택) buildx로 multi-arch
-PLATFORMS ?= linux/amd64,linux/arm64
+
 .PHONY: dockerx
 dockerx: ## Multi-arch build and push via buildx
 	@echo ">> Buildx build/push $(IMAGE_REPO):$(TAG) for $(PLATFORMS)"
