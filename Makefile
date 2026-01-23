@@ -68,10 +68,10 @@ LATEST_TAG ?=
 
 # ---------- Docker image build/push ----------
 DOCKERFILE ?= Dockerfile
-IMAGE_REPO ?= 192.168.61.145/petasus-ai/image-builder
+IMAGE_REPO ?= registry.gitlab.com/sonaproject/image-builder
 #IMAGE_REPO ?= image-builder
 #TAG        ?= $(GIT_VERSION)
-TAG        ?= v3.4.1-csap
+TAG        ?= latest
 KANIKO_VERSION ?= v1.25.0
 # (선택) buildx로 multi-arch
 PLATFORMS ?= linux/amd64,linux/arm64
