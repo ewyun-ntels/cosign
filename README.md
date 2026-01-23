@@ -3,6 +3,20 @@
 </p>
 
 # cosign
+### 변경사항
+CSAP 검증을 위해 기존 cosign 소스 수정<br>
+kaniko 툴 포함한 image-builder 이미지 생성
+
+### 배포 방법
+디폴트 설정<br>REPO=registry.gitlab.com/sonaproject/image-builder<br> TAG=latest
+```bash
+make dockerx
+```
+or
+REPO 또는 TAG를 수정할 경우
+```bash
+make dockerx IMAGE_REPO=myrepo/myimage TAG=v1.0.0
+```
 
 Signing OCI containers (and other artifacts) using [Sigstore](https://sigstore.dev/)!
 
